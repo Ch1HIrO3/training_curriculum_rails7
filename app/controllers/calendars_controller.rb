@@ -20,6 +20,8 @@ class CalendarsController < ApplicationController
 
   def get_week
     wdays = ['(日)','(月)','(火)','(水)','(木)','(金)','(土)']
+    require 'date'
+    wday_num = Date.today.wday# wdayメソッドを用いて取得した数値
 
     # Dateオブジェクトは、日付を保持しています。下記のように`.today.day`とすると、今日の日付を取得できます。
     @todays_date = Date.today
@@ -34,9 +36,13 @@ class CalendarsController < ApplicationController
       plans.each do |plan|
         today_plans.push(plan.plan) if plan.date == @todays_date + x
       end
-      days = { month: (@todays_date + x).month, date:  (@todays_date+x).day, plans: today_plans}
-      @week_days.push(days)
+        # 曜日の取得処理
+        if wday_num >= 7 #「wday_numが7以上の場合」という条件式
+          wday_num = wday_num -7
+        end
+        days = { month: (@todays_date + x).month, date:  (@todays_date+x).day, plans: today_plans, wday: wdays[wday_num]}
+        @week_days.push(days)
+        wday_num += 1
     end
-
   end
 end
